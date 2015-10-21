@@ -1,0 +1,58 @@
+.button-begin {
+  width: 7em !important; 
+  height: 7em !important;
+}
+.quiz-info {
+  text-align: center;
+}
+.button-next {
+	height: 3em !important; min-width: 7em;
+}
+.small {
+	font-size: .5em !important;
+}
+.red {
+	color: #ff0000;
+}
+.green {
+	color: #0f9d58;
+}
+.whiteframe {
+  min-height: 2.5em !important;
+  font-weight: bold;
+  padding: 5px; 
+}
+
+
+#clock{
+    font-family: sans-serif;
+    color: #fff;
+    display: inline-block;
+    font-weight: 100;
+    text-align: center;
+    font-size: 30px;
+}
+
+#clock > div{
+    padding: 10px;
+    border-radius: 3px;
+    background: #00BF96;
+    display: inline-block;
+}
+
+#clock div > span{
+    padding: 15px;
+    border-radius: 3px;
+    background: #00816A;
+    display: inline-block;
+}
+
+.inactive {
+	transition : left : 1.1s ease-in-out;
+}
+.active {
+	left: 40px;
+}
+.inactive.answered {
+	left : -1350px;
+}

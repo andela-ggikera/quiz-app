@@ -1,0 +1,23 @@
+what is the diameter of earth ? 8000 miles,
+what is the world's biggest island ? greenland
+who averaged one patent for every three weeks of his life? Thomas Edison.
+what is the only american state to begin with the letter p ? pennsylvania
+How many days does a cat usually stay in heat ? five
+what was the first planet to be discovered using the telescope in 1781? Uranus.
+
+Whats the 
+
+
+
+<div ng-controller="ExampleController">
+  <select ng-model="selection" ng-options="item for item in items">
+  </select>
+  <code>selection={{selection}}</code>
+  <hr/>
+  <div class="animate-switch-container"
+    ng-switch on="selection">
+      <div class="animate-switch" ng-switch-when="settings">Settings Div</div>
+      <div class="animate-switch" ng-switch-when="home">Home Span</div>
+      <div class="animate-switch" ng-switch-default>default</div>
+  </div>
+</div>

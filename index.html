@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html ng-app="telequiz">
+  <head>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="lib/angular-material/angular-material.css"> 
+    <link rel="stylesheet" href="css/style.css"> 
+  </head>
+  <body ng-controller="QuizController" layout="column">
+    <md-toolbar layout-align="center center">
+        <h2>Telequiz</h2>
+    </md-toolbar>
+    <div layout = "row" flex > 
+        <md-sidenav layout="column" md-component-id="right">
+            <md-list>
+                <md-list-item>
+                    <md-button>I am here</md-button>
+                </md-list-item>
+            </md-list>
+            <div class="timer">
+                <p>Seconds remaining</p>
+            </div>
+        </md-sidenav>
+        <md-content id="content" flex >
+            <md-card layout-align="center center" ng-show="quiz.begin === false">
+                <md-card-content layout-wrap class="quiz-info">
+                    <p> Welcome to Telequiz, a platform for testing your trivia skills</p>
+                    <p>
+                        You will be asked a series of timed questions to test your knowledge on just about anything. Click below to start your quiz
+                    </p>
+                    <section layout-align="center center" layout-wrap>
+                        <md-button class="button-begin md-fab md-primary" aria-label="Begin" ng-click="begin()">Begin</md-button>
+                    </section>
+                </md-card-content>
+            </md-card>
+            <div ng-show="quiz.begin === true" ng-repeat = "question in questions track by $index">
+                <md-card layout="column" layout-align="center center"  ng-if="$index === quiz.activeQuestion">
+                    <md-card-content>
+                        <p layout-align="center center">{{quiz.activeQuestion + 1}} : &nbsp; {{question.question}}</p>
+                        <div layout="row">
+                            <md-radio-group ng-model="data.group1" layout="column">
+                              <md-radio-button ng-repeat="answer in question.answers" ng-value="answer.id" ng-click="selectAnswer($parent.$index, $index)" class="md-primary">{{ answer.text }}</md-radio-button>
+                            </md-radio-group>
+                            </br>
+                            
+                            <div layout="column" layout-align="right" id="clock">
+                                <div>
+                                   <span ng-if="!question.correctness">{{clock.counter}}</span> 
+                                   <span ng-if="!question.correctness && clock.timeover === true" class="small">Yikes, you ran out of time!</span> 
+                                   <span ng-if="(clock.timeover === true && !question.correctness) || question.correctness === 'incorrect'" class="small">The answer is {{quiz.correctAnswer}}</span> 
+                                </div>
+                            </div>
+                            <md-button aria-label="Next Question" ng-if="!quiz.finished && (question.correctness || clock.timeover)" class="md-raised button-next" ng-click="nextQuestion()">Next Question</md-button>
+                        </div>
+                    </md-card-content>
+                    <md-card-content>
+                        <section ng-if="question.correctness" class="" flex="25" layout="column" layout-align="right end">
+                                <span ng-if="question.correctness === 'correct'" class="green">That's correct!</span>
+                                <span ng-if="question.correctness === 'incorrect'" class="red">Yikes, that is incorrect!</span>
+                                <p>{{ question.feedback }}</p>
+                            </section>
+                    </md-card-content>
+                </md-card>   
+            </div>
+            
+            
+            <md-card ng-show="feedback === true">
+                <md-card-content>
+                    <p ng-show="myQuestion.correctness === 'correct'">You are <strong>correct</strong>.</p>
+                    <p ng-show="myQuestion.correctness === 'incorrect'">Oops! That is not correct.</p>
+                </md-card-content>
+            </md-card> 
+        </md-content>
+    </div>
+    <script src="lib/angular/angular.js"></script>
+    <script src="lib/angular-aria/angular-aria.js"></script>
+    <script src="lib/angular-animate/angular-animate.js"></script>
+    <script src="lib/angular-material/angular-material.js"></script>
+    <script type="text/javascript">
+
+      angular.module('telequiz', ['ngMaterial'])
+      .config(function($mdThemingProvider) {
+        $mdThemingProvider.theme('altTheme').primaryPalette('brown');
+       });
+    </script>
+    <script src="js/quiz.js"></script>
+
+  </body>
+</html>
