@@ -42,22 +42,24 @@
                             </md-radio-group>
                             </br>
                             
-                            <div layout="column" layout-align="right" id="clock">
+                            
+                            
+                        </div>
+                    </md-card-content>
+                    <md-card-content layout="start start">
+                        <section ng-if="question.correctness" class="" flex="25" layout="column" layout-align="start center">
+                                <span ng-if="question.correctness === 'correct'" class="green">That's correct!</span>
+                                <span ng-if="question.correctness === 'incorrect'" class="red">Yikes, that is incorrect!</span>
+                                <p>{{ question.feedback }}</p>
+                            </section>
+                        <div layout="column" layout-align="right" id="clock">
                                 <div>
                                    <span ng-if="!question.correctness">{{clock.counter}}</span> 
                                    <span ng-if="!question.correctness && clock.timeover === true" class="small">Yikes, you ran out of time!</span> 
                                    <span ng-if="(clock.timeover === true && !question.correctness) || question.correctness === 'incorrect'" class="small">The answer is {{quiz.correctAnswer}}</span> 
                                 </div>
-                            </div>
-                            <md-button aria-label="Next Question" ng-if="!quiz.finished && (question.correctness || clock.timeover)" class="md-raised button-next" ng-click="nextQuestion()">Next Question</md-button>
                         </div>
-                    </md-card-content>
-                    <md-card-content>
-                        <section ng-if="question.correctness" class="" flex="25" layout="column" layout-align="right end">
-                                <span ng-if="question.correctness === 'correct'" class="green">That's correct!</span>
-                                <span ng-if="question.correctness === 'incorrect'" class="red">Yikes, that is incorrect!</span>
-                                <p>{{ question.feedback }}</p>
-                            </section>
+                        <md-button aria-label="Next Question" ng-if="!quiz.finished && (question.correctness || clock.timeover)" class="md-raised md-primary button-next" ng-click="nextQuestion()">Next Question</md-button>
                     </md-card-content>
                 </md-card>   
             </div>

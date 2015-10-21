@@ -10,7 +10,7 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
   };
   $scope.activeQuestionsAnswered = 0;
   $scope.clock = {};
-  $scope.clock.counter = 5;
+  $scope.clock.counter = 10;
   var mytimeout = null; // the current timeoutID
   $scope.questions = [{
     "question" : "What is the most abundant mineral in intelligent people's hair?",
@@ -120,7 +120,7 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
     // stops and resets the current timer
   $scope.stopTimer = function() {
     $scope.$broadcast('timer-stopped', $scope.clock.counter);
-    $scope.clock.counter = 5;
+    $scope.clock.counter = 10;
     $timeout.cancel(mytimeout);
   };
  
