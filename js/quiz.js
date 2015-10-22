@@ -4,6 +4,7 @@ angular.module('telequiz')
 .controller("QuizController", function ($scope, $sce, $timeout, $mdDialog, $window, $firebaseObject, $firebaseArray, $q) {
   $scope.percentage = 0;
   $scope.score = 0;
+  $scope.user = {};
   $scope.quiz = {
   	begin : false,
   	activeQuestion : -1
@@ -103,17 +104,17 @@ angular.module('telequiz')
       {"id"  : 2, "text" : "An expert"},
       {"id"  : 3, "text" : "I slept in English class"},
     ]
-  }
-  ];
+  }];
 
-  
   $scope.totalQuestions = $scope.questions.length;
+  // begin the quiz
   $scope.begin = function () {
   	$scope.quiz.begin = true;
   	$scope.quiz.activeQuestion = 0;
   	$scope.startTimer();
   };
-  // actual timer method, counts down every second, stops on zero
+
+  // the timer method, counts down every second, stops on zero
   $scope.onTimeout = function() {
     if($scope.clock.counter ===  0) {
       $scope.$broadcast('timer-stopped', 0);
@@ -123,26 +124,30 @@ angular.module('telequiz')
     $scope.clock.counter--;
     mytimeout = $timeout($scope.onTimeout, 1000);
   };
+
   $scope.startTimer = function() {
   	$scope.clock.timeover = false;
     mytimeout = $timeout($scope.onTimeout, 1000);
   };
-    // stops and resets the current timer
+
+  // stops and resets the current timer
   $scope.stopTimer = function() {
     $scope.$broadcast('timer-stopped', $scope.clock.counter);
     $scope.clock.counter = 10;
     $timeout.cancel(mytimeout);
   };
-  // triggered, when the timer stops, you can do something here, maybe show a visual indicator or vibrate the device
+
+  // triggered, when the timer stops
   $scope.$on('timer-stopped', function (event, remaining) {
     if(remaining === 0) {
-      console.log('your time ran out!');
       $scope.clock.timeover = true;
       var curIndex = $scope.quiz.activeQuestion;
-      var answerIndex = $scope.questions[curIndex].correct;
-      $scope.quiz.correctAnswer = $scope.questions[curIndex].answers[answerIndex].text;
+      var correctAnswer =  $scope.answers[curIndex];
+      $scope.quiz.correctAnswer = $scope.questions[curIndex].answers[correctAnswer].text;
     }
   }); 
+
+  // handle results when quiz finishes
   $scope.$watch('quiz.activeQuestion', function (activeQuestion) {
   	if (activeQuestion === $scope.totalQuestions) {
       $scope.stopTimer();
@@ -152,15 +157,17 @@ angular.module('telequiz')
   	  return ($scope.quiz.finished = true);
   	}
   });
+
+  // when a user selects an answer
   $scope.selectAnswer = function (qIndex, aIndex) {
   	$scope.quiz.timeover = true;
     var questionState = $scope.questions[qIndex].questionState;
     if( questionState != 'answered' ) {
       $scope.questions[qIndex].selectedAnswer = aIndex;
-      var correctAnswer = $scope.answers[qIndex]; //$scope.questions[qIndex].correct;
+      var correctAnswer = $scope.answers[qIndex]; 
       $scope.quiz.correctAnswer = $scope.questions[$scope.quiz.activeQuestion].answers[correctAnswer].text;
+      console.log($scope.quiz.correctAnswer);
       $scope.questions[qIndex].correctAnswer = correctAnswer;
-
       if(aIndex === correctAnswer) {
         $scope.questions[qIndex].correctness = 'correct';
         $scope.score += 1;
@@ -171,12 +178,6 @@ angular.module('telequiz')
       $scope.questions[qIndex].questionState = 'answered';
     }
     $scope.percentage = (($scope.score / $scope.totalQuestions)*100).toFixed(2);
-  };
-  $scope.isSelected = function (qIndex, aIndex) {
-    return $scope.questions[qIndex].selectedAnswer === aIndex;
-  };
-  $scope.isCorrect = function (qIndex, aIndex) {
-    return $scope.questions[qIndex].correctAnswer === aIndex;
   };
   $scope.nextQuestion = function () {
   	setTimeout( function (){
@@ -190,48 +191,45 @@ angular.module('telequiz')
 
     var emailLink = '<a class="share email" href="mailto:?subject=Try to beat my quiz score!&body=I scored '+ percentage +'% on telequiz. Try to beat my score at '+ url +'"></a>';
 
-    var twitterlLink = '<a class="share twitter" target="_blank" href="http://twitter.com/share?text=I scored '+ percentage +'% on telequiz. Try to beat my score at&url='+url+'&hashtags=Telequiz"></a>';
+    var twitterlLink = '<a class="share twitter" target="_blank" href="http://twitter.com/share?text=I scored '+ percentage +'% on telequiz. Try to beat my score at&url=' +url+ '&hashtags=Telequiz"></a>';
 
     var newMarkup = emailLink + twitterlLink;
 
     return $sce.trustAsHtml(newMarkup);
   };
-
-
   var auth = new Firebase("https://telequiz.firebaseio.com");
-    //Authenticate the user using firebase facebook OAuth
-    function register() {
-      return $q(function(resolve, reject) {
-        auth.authWithOAuthPopup("facebook", function(error, data) {
-          if(error) {
-            reject(error);
-          } else {
-            resolve(data);
-          }
-        });
+  //Authenticate the user using firebase Facebook OAuth
+  function registerWithFacebook() {
+    return $q(function(resolve, reject) {
+      auth.authWithOAuthPopup("facebook", function(error, data) {
+        if(error) {
+          reject(error);
+        } else {
+          resolve(data);
+        }
       });
-    }
-    //get all the leaderboard data from firebase
-    function getLeaderBoard (callback) {
-      var reference = new Firebase("https://telequiz.firebaseio.com/leaderboard/");
-      return callback($firebaseArray(reference));
-    }
-    //add a new score to the leaderboard
-    function addData() {
-      // create a reference to the database location where we will store our data
-      var ref = new Firebase("https://typr.firebaseio.com/leaderboard/");
-      // this uses AngularFire to create the synchronized array
-      return $firebaseArray(ref);
-    }
-
+    });
+  }
+  //get all the leaderboard data from firebase
+  function getLeaderBoard (callback) {
+    var reference = new Firebase("https://telequiz.firebaseio.com/leaderboard/");
+    return callback($firebaseArray(reference));
+  }
+  //get leaderboard reference
+  function data() {
+    var ref = new Firebase("https://telequiz.firebaseio.com/leaderboard");
+    // this uses AngularFire to create the synchronized array
+    return $firebaseArray(ref);
+  }
   $scope.register = function () {
-    register().then(function(authData){
-      console.log(authData);
+    registerWithFacebook().then(function(authData){
+      console.log("Heres your auth data..." + JSON.stringify(authData));
       var user = {};
       $scope.user.id = authData.facebook.id,
       $scope.user.name = authData.facebook.displayName;
       $scope.user.profileImageURL = authData.facebook.profileImageURL;
       $scope.loggedIn = true;
     });
+    return $scope.user;
   };
 });

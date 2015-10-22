@@ -18,6 +18,10 @@
 .red {
   color: #ff0000;
 }
+.white {
+  color: #fff !important;
+  height: 2em;
+}
 .menu {
   color: #fff  !important;
 }

@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html ng-app="telequiz">
+<html>
   <head>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="lib/angular-material/angular-material.css"> 
     <link rel="stylesheet" href="css/style.css"> 
+    <script src="lib/angular/angular.js"></script>
+    <script src="lib/angular-aria/angular-aria.js"></script>
+    <script src="lib/angular-animate/angular-animate.js"></script>
+    <script src="lib/angular-material/angular-material.js"></script>
   </head>
-  <body ng-controller="QuizController" layout="column">
+  <body ng-app="telequiz" ng-controller="QuizController" layout="column" >
     <md-toolbar layout="row">
-      <span flex-25></span>
-      <h3 layout="column" layout-align="start center" flex-50>Telequiz</h3>  
-      <md-button class="white" ng-click="register()" layout="column" layout-align="end end" flex-50 aria-label="Menu"><!--hide-gt-md -->
-        <ng-md-icon icon="menu"></ng-md-icon>
-      </md-button>    
+      <h2 layout="column" layout-align="center center" flex-50>telequiz</h2>      
     </md-toolbar>
     <div layout="row" flex>
       <md-sidenav md-component-id="left" layout="column" md-is-locked-open="$mdMedia('gt-sm')" class="md-whiteframe-z2">
@@ -20,11 +20,14 @@
              <label>&nbsp;</label>
              <input ng-model="search.who" placeholder="Search leaderboard">
            </md-input-container>
+           <md-button class="white" ng-click="register()" layout="column" layout-align="center center" flex-50 aria-label="Menu">
+             <ng-md-icon icon="add"></ng-md-icon>
+           </md-button>
          </div>
          <md-list>
-            <md-list-item class="md-2-line" ng-repeat="user in users.leaderboard | filter:search.who | orderBy: $index">
+            <md-list-item class="md-2-line" ng-repeat="user in users.leaderboard | filter:search.who | orderBy: -score">
               <h3>{{$index + 1}}. </h3>
-              <img ng-src="{{user.profileImageURL}}" class="md-avatar" alt="" />
+              <img ng-src="{{user.profileImageURL}}" class="md-avatar" alt="{{todos[0].who}}" />
               <div class="md-list-item-text">
                 <h3>{{ user.name }}</h3>
                 <p>score: {{user.score}}%</p>
@@ -87,7 +90,6 @@
             </div>
           </md-card-content>
           <md-card-content layout="column">
-            <div>Use the links below to challenge your friends.</div>
             <div class="share" ng-bind-html="createShareLinks(percentage)"></div>
           </md-card-content>
           </br>
@@ -98,29 +100,11 @@
           </md-card-content>
         </md-card>
       </md-content>
-    </div> 
-    <script src="lib/angular/angular.js"></script>
-    <script src="lib/angular-aria/angular-aria.js"></script>
-    <script src="lib/angular-animate/angular-animate.js"></script>
-    <script src="lib/angular-material/angular-material.js"></script>
+    </div>
     <script src="js/firebase.js"></script>
     <script src="js/angularfire.min.js"></script>
     <script src="https://cdn.jsdelivr.net/angular-material-icons/0.4.0/angular-material-icons.min.js"></script> 
-    <script type="text/javascript">
-
-      angular.module('telequiz', 
-        [
-        'ngMaterial',
-        'ngAnimate', 
-        'ngMdIcons',
-        'firebase'
-        ])
-      .config(function($mdThemingProvider, $mdThemingProvider, $mdIconProvider) {
-        $mdThemingProvider.theme('altTheme').primaryPalette('brown');
-        $mdIconProvider.defaultIconSet("assets/start.svg", 128)
-       });
-
-    </script>
+    <script src="js/app.js"></script>
     <script src="js/services.js"></script>
     <script src="js/quiz.js"></script>
     
