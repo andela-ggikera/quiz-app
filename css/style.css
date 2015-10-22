@@ -30,6 +30,9 @@
   padding: 5px; 
 }
 
+.question-container {
+  width: 60em !important;
+}
 
 #clock{
     font-family: sans-serif;
@@ -72,22 +75,26 @@ a.share-button{
   background-position: 10px 5px;
   background-size: 25px 25px;
 }
-.results{
+#results{
   font-family: sans-serif;
     color: #fff;
     display: inline-block;
-    font-weight: 100;
+    font-weight: 50;
     text-align: center;
-    font-size: 30px;
+    font-size: 20px;
 }
-.results  > div {
+#results  > div {
     padding: 10px;
     border-radius: 3px;
     background: #00BF96;
     display: inline-block;
 }
-.share{
-  margin-top: 40px;
+
+#result div > span {
+    padding: 15px;
+    border-radius: 3px;
+    background: #00816A;
+    display: inline-block;
 }
 .email{
   background-color: #f0a121;

@@ -37,7 +37,7 @@
             </md-list-item>
          </md-list>
       </md-sidenav>
-      <md-content id="content" flex >
+      <md-content id="content" flex>
         <md-card layout-align="center center" ng-show="quiz.begin === false">
           <md-card-content layout-wrap class="quiz-info">
             <p> Welcome to Telequiz, a platform for testing your trivia skills</p>
@@ -49,54 +49,52 @@
             </section>
           </md-card-content>
         </md-card>
-        <div layout="row" ng-show="quiz.begin === true" ng-repeat = "question in questions track by $index">
-           <md-card layout="column" layout-align="start start"  ng-if="$index === quiz.activeQuestion" class="fade-in-out">
+        <div layout="row" ng-show="quiz.begin === true" ng-repeat = "question in questions track by $index" class="question-container" ng-if="$index === quiz.activeQuestion">
+           <md-card layout="column" layout-align="start start" class="fade-in-out">
              <md-card-content>
-                <h2 layout-align="center center">{{quiz.activeQuestion + 1}} : &nbsp; {{question.question}}</h2dict>
+                <h2 layout-align="center center">{{quiz.activeQuestion + 1}} : &nbsp; {{question.question}}</h2>
                 <div layout="row">
                   <md-radio-group ng-model="data.group1" layout="column">
                     <md-radio-button ng-repeat="answer in question.answers" ng-value="answer.id" ng-click="selectAnswer($parent.$index, $index)" class="md-primary">{{ answer.text }}</md-radio-button>
                   </md-radio-group>
                   </br>   
                 </div>
-             </md-card-content>
-           </md-card>  
-        </div>
-        <md-card layout="column" layout-align="end end" layout-wrap >
-             <md-card-content layout-align="start start">
-               <section ng-if="question.correctness" class="" flex="50" layout="column" layout-align="start center">
-                  <span ng-if="question.correctness === 'correct'" class="green">That's correct!</span>
+             </md-card-content>  
+           </md-card> 
+           <md-card>
+             <md-card-content layout-align="end end">
+               <section ng-if="question.correctness" class="" flex layout="column" layout-align="start start">
                   <span ng-if="question.correctness === 'incorrect'" class="red">Yikes, that's incorrect!</span>
                   <p>{{ question.feedback }}</p>
                </section>
                <div layout="column" layout-align="right" id="clock">
                   <div>
                     <span ng-if="!question.correctness">{{clock.counter}}</span> 
-                    <span ng-if="!question.correctness && clock.timeover === true" class="small">Yikes, you ran out of time!</span> 
+                    <span ng-if="!question.correctness && clock.timeover === true" class="small">Oops, you ran out of time!</span> 
                     <span ng-if="(clock.timeover === true && !question.correctness) || question.correctness === 'incorrect'" class="small">The answer is {{quiz.correctAnswer}}</span> 
+                    <span ng-if="question.correctness === 'correct'">That's correct!</span>
                   </div>
                </div>
                <md-button aria-label="Next Question" ng-if="!quiz.finished && (question.correctness || clock.timeover)" class="md-raised md-primary button-next" ng-click="nextQuestion()">Next Question</md-button>
              </md-card-content> 
-        </md-card>
-        <md-card ng-show="feedback === true">
-          <md-card-content>
-            <p ng-show="myQuestion.correctness === 'correct'">You are <strong>correct</strong>.</p>
-            <p ng-show="myQuestion.correctness === 'incorrect'">Oops! That is not correct.</p>
-          </md-card-content>
-        </md-card>
+           </md-card>  
+        </div>
         <md-card ng-if="quiz.finished === true" layout="row" layout-wrap>
-          <md-card-content layout="column" layout-align="start center">
-            <span id="left"></span>
-            <h3>Results</h3>
-            <p class="">You scored {{percentage}}% by correctly answering {{score}} of the total {{totalQuestions}} questions.</p>
-            <p>Use the links below to challenge your friends.</p>
+          <md-card-content layout="column" layout-align="start center" id="results">
+            <div>Results</div>
+            <div>
+                <span>You scored {{percentage}}% by correctly answering {{score}} of the total {{totalQuestions}} questions</span>
+            </div>
+          </md-card-content>
+          <md-card-content layout="column">
+            <div>Use the links below to challenge your friends.</div>
             <div class="share" ng-bind-html="createShareLinks(percentage)"></div>
           </md-card-content>
-          <md-card-content layout="column" layout-align="end center">
-            <h3>Challenge yourself even more</h3>
+          </br>
+          </br>
+          <md-card-content layout="column" layout-align="center center">
+            <h3>Not pleased with your score?</h3>
             <md-button class="md-fab md-primary button-retake" aria-label="Retake Test" ng-click="reload()">Retake Test</md-button>
-            <span id="right"></span>
           </md-card-content>
         </md-card>
       </md-content>
