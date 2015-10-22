@@ -15,15 +15,24 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
   $scope.clock = {};
   $scope.clock.counter = 10;
   var mytimeout = null; // the current timeoutID
-  $scope.questions = [{
+  
+  //instantiate firebase integration
+  var firebase = new Firebase('https://telequiz.firebaseio.com/telequiz');
+  $scope.answers = {};
+  //fetch the answers
+  firebase.once('value', function(data){
+    $scope.answers = data.val();
+  });
+  //quiz questions
+  $scope.questions = [
+  {
     "question" : "What is the most abundant mineral in intelligent people's hair?",
     "answers" : [
       {"id" : 0, "text" : "Iron"},
       {"id" : 1, "text" : "Potassium"},
       {"id" : 2, "text" : "Zinc"},
       {"id" : 3, "text" : "Kryptonite"} 
-    ],
-    "correct": 2
+    ]
   },
   {
     "question" : "What's the largest island on earth?",
@@ -32,8 +41,7 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
       {"id"  : 1, "text" : "Greenland"},
       {"id"  : 2, "text" : "New Zealand"},
       {"id"  : 3, "text" : "Madagascar"}
-    ],
-    "correct"  : 1
+    ]
   },
   {
     "question" : "One year on planet Saturn is equivalent to how many years on Earth?",
@@ -42,8 +50,7 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
       {"id"  : 1, "text" : "6"},
       {"id"  : 2, "text" : "29"},
       {"id"  : 3, "text" : "2"}
-    ],
-    "correct"  : 2
+    ]
   },
   {
     "question" : "A pregnant goldfish is called a?",
@@ -52,8 +59,7 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
       {"id"  : 1, "text" : "twit"},
       {"id"  : 2, "text" : "floss"},
       {"id"  : 3, "text" : "gold-digger"}
-    ],
-    "correct"  : 1
+    ]
   },
   {
     "question" : "What is the diameter of planet earth?",
@@ -62,9 +68,7 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
       {"id"  : 1, "text" : "800 miles"},
       {"id"  : 2, "text" : "80000 miles"},
       {"id"  : 3, "text" : "I slept in geography class"},
-    ],
-    "correct"  : 0,
-    "feedback" : ""
+    ]
   },
   {
     "question" : "Who averaged one patent for every three weeks of his life?",
@@ -73,8 +77,7 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
       {"id"  : 1, "text" : "Elon Musk"},
       {"id"  : 2, "text" : "Carl Benz"},
       {"id"  : 3, "text" : "That guy in Silicon Valley"},
-    ],
-    "correct"  : 0
+    ]
   },
   {
     "question" : "what was the first planet to be discovered using the telescope in 1781?",
@@ -83,8 +86,7 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
       {"id"  : 1, "text" : "Krypton"},
       {"id"  : 2, "text" : "Uranus"},
       {"id"  : 3, "text" : "Neptune"},
-    ],
-    "correct"  : 2
+    ]
   },
   {
     "question" : "Who is a connoisseur?",
@@ -93,9 +95,11 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
       {"id"  : 1, "text" : "A philanthropist"},
       {"id"  : 2, "text" : "An expert"},
       {"id"  : 3, "text" : "I slept in English class"},
-    ],
-    "correct"  : 2
-  }];
+    ]
+  }
+  ];
+
+  
   $scope.totalQuestions = $scope.questions.length;
   $scope.begin = function () {
   	$scope.quiz.begin = true;
@@ -112,19 +116,16 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
     $scope.clock.counter--;
     mytimeout = $timeout($scope.onTimeout, 1000);
   };
- 
   $scope.startTimer = function() {
   	$scope.clock.timeover = false;
     mytimeout = $timeout($scope.onTimeout, 1000);
   };
- 
     // stops and resets the current timer
   $scope.stopTimer = function() {
     $scope.$broadcast('timer-stopped', $scope.clock.counter);
     $scope.clock.counter = 10;
     $timeout.cancel(mytimeout);
   };
- 
   // triggered, when the timer stops, you can do something here, maybe show a visual indicator or vibrate the device
   $scope.$on('timer-stopped', function (event, remaining) {
     if(remaining === 0) {
@@ -135,7 +136,6 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
       $scope.quiz.correctAnswer = $scope.questions[curIndex].answers[answerIndex].text;
     }
   }); 
-
   $scope.$watch('quiz.activeQuestion', function (activeQuestion) {
   	if (activeQuestion === $scope.totalQuestions) {
       $scope.stopTimer();
@@ -147,7 +147,7 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
     var questionState = $scope.questions[qIndex].questionState;
     if( questionState != 'answered' ) {
       $scope.questions[qIndex].selectedAnswer = aIndex;
-      var correctAnswer = $scope.questions[qIndex].correct;
+      var correctAnswer = $scope.answers[qIndex]; //$scope.questions[qIndex].correct;
       $scope.quiz.correctAnswer = $scope.questions[$scope.quiz.activeQuestion].answers[correctAnswer].text;
       $scope.questions[qIndex].correctAnswer = correctAnswer;
 
@@ -175,22 +175,6 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
   	},0);
   	return $scope.quiz.activeQuestion += 1;
   };
- /*
-  $scope.openFromLeft = function() {
-    $mdDialog.show(
-      $mdDialog.alert()
-        .clickOutsideToClose(true)
-        .title('Opening from the left')
-        .content('Closing to the right!')
-        .ariaLabel('Left to right demo')
-        .ok('Nice!')
-        // You can specify either sting with query selector
-        .openFrom('#left')
-        // or an element
-        .closeTo(angular.element(document.querySelector('#right')))
-    );
-  };
- */
   $scope.createShareLinks = function (percentage) {
     var url = 'https://telequiz.firebaseapp.com';
 
@@ -203,12 +187,3 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
     return $sce.trustAsHtml(newMarkup);
   };
 });
-/*
-  this.topDirections = ['left', 'up'];
-  this.bottomDirections = ['down', 'right'];
-  this.isOpen = false;
-  this.availableModes = ['md-fling', 'md-scale'];
-  this.selectedMode = 'md-fling';
-  this.availableDirections = ['up', 'down', 'left', 'right'];
-  this.selectedDirection = 'up';
-  */

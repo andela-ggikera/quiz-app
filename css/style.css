@@ -24,6 +24,9 @@
 .green {
   color: #0f9d58;
 }
+.radio {
+  border-color: #fff !important;
+}
 .whiteframe {
   min-height: 2.5em !important;
   font-weight: bold;

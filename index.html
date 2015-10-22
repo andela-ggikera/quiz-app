@@ -49,19 +49,19 @@
             </section>
           </md-card-content>
         </md-card>
-        <div layout="row" ng-show="quiz.begin === true" ng-repeat = "question in questions track by $index" class="question-container" ng-if="$index === quiz.activeQuestion">
-           <md-card layout="column" layout-align="start start" class="fade-in-out">
-             <md-card-content>
+        <div layout="row" ng-show="quiz.begin === true" ng-repeat = "question in questions track by $index" ng-if="$index === quiz.activeQuestion">
+           <md-card layout="column" layout-align="start start" flex-50 class="fade-in-out">
+             <md-card-content class="blue-question-container">
                 <h2 layout-align="center center">{{quiz.activeQuestion + 1}} : &nbsp; {{question.question}}</h2>
                 <div layout="row">
-                  <md-radio-group ng-model="data.group1" layout="column">
-                    <md-radio-button ng-repeat="answer in question.answers" ng-value="answer.id" ng-click="selectAnswer($parent.$index, $index)" class="md-primary">{{ answer.text }}</md-radio-button>
+                  <md-radio-group ng-model="data.group1" layout="column" class="md-primary">
+                    <md-radio-button class="radio" ng-repeat="answer in question.answers" ng-value="answer.id" ng-click="selectAnswer($parent.$index, $index)">{{ answer.text }}</md-radio-button>
                   </md-radio-group>
                   </br>   
                 </div>
              </md-card-content>  
            </md-card> 
-           <md-card>
+           <md-card flex-50 class="fade-in-out">
              <md-card-content layout-align="end end">
                <section ng-if="question.correctness" class="" flex layout="column" layout-align="start start">
                   <span ng-if="question.correctness === 'incorrect'" class="red">Yikes, that's incorrect!</span>
@@ -103,6 +103,7 @@
     <script src="lib/angular-aria/angular-aria.js"></script>
     <script src="lib/angular-animate/angular-animate.js"></script>
     <script src="lib/angular-material/angular-material.js"></script>
+    <script src="js/firebase.js"></script>
     <script src="//cdn.jsdelivr.net/angular-material-icons/0.4.0/angular-material-icons.min.js"></script> 
     <script type="text/javascript">
 
@@ -115,6 +116,6 @@
 
     </script>
     <script src="js/quiz.js"></script>
-
+    
   </body>
 </html>
