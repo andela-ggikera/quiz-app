@@ -1,12 +1,15 @@
 'use strict';
 
 angular.module( 'telequiz', [ 'ngMaterial' ] )
-.controller("QuizController", function ($scope, $sce, $timeout) {
+.controller("QuizController", function ($scope, $sce, $timeout, $mdDialog, $window) {
   $scope.percentage = 0;
   $scope.score = 0;
   $scope.quiz = {
   	begin : false,
   	activeQuestion : -1
+  };
+  $scope.reload = function(){
+    $window.location.reload();
   };
   $scope.activeQuestionsAnswered = 0;
   $scope.clock = {};
@@ -94,8 +97,6 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
     "correct"  : 2
   }];
   $scope.totalQuestions = $scope.questions.length;
-
-
   $scope.begin = function () {
   	$scope.quiz.begin = true;
   	$scope.quiz.activeQuestion = 0;
@@ -137,7 +138,6 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
 
   $scope.$watch('quiz.activeQuestion', function (activeQuestion) {
   	if (activeQuestion === $scope.totalQuestions) {
-  	  console.log('Quiz finished');
       $scope.stopTimer();
   	  return ($scope.quiz.finished = true);
   	}
@@ -151,7 +151,7 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
       $scope.quiz.correctAnswer = $scope.questions[$scope.quiz.activeQuestion].answers[correctAnswer].text;
       $scope.questions[qIndex].correctAnswer = correctAnswer;
 
-      if( aIndex === correctAnswer) {
+      if(aIndex === correctAnswer) {
         $scope.questions[qIndex].correctness = 'correct';
         $scope.score += 1;
         //console.log($scope.score);
@@ -162,15 +162,12 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
     }
     $scope.percentage = (($scope.score / $scope.totalQuestions)*100).toFixed(2);
   };
-
   $scope.isSelected = function (qIndex, aIndex) {
     return $scope.questions[qIndex].selectedAnswer === aIndex;
   };
-
   $scope.isCorrect = function (qIndex, aIndex) {
     return $scope.questions[qIndex].correctAnswer === aIndex;
   };
-  
   $scope.nextQuestion = function () {
   	setTimeout( function (){
   	  $scope.stopTimer();
@@ -178,13 +175,28 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
   	},0);
   	return $scope.quiz.activeQuestion += 1;
   };
-
+ /*
+  $scope.openFromLeft = function() {
+    $mdDialog.show(
+      $mdDialog.alert()
+        .clickOutsideToClose(true)
+        .title('Opening from the left')
+        .content('Closing to the right!')
+        .ariaLabel('Left to right demo')
+        .ok('Nice!')
+        // You can specify either sting with query selector
+        .openFrom('#left')
+        // or an element
+        .closeTo(angular.element(document.querySelector('#right')))
+    );
+  };
+ */
   $scope.createShareLinks = function (percentage) {
-    var url = 'http://telequiz.firebaseapp.com';
+    var url = 'https://telequiz.firebaseapp.com';
 
-    var emailLink = '<a class="share email" href="mailto:?subject=Try to beat my quiz score!&body=I scored a '+ percentage +'% on telequiz. Try to beat my score at '+ url +'"></a>';
+    var emailLink = '<a class="share email" href="mailto:?subject=Try to beat my quiz score!&body=I scored '+ percentage +'% on telequiz. Try to beat my score at '+ url +'"></a>';
 
-    var twitterlLink = '<a class="share twitter" target="_blank" href="http://twitter.com/share?text=I scored a '+ percentage +'%25 on this quiz about Saturn. Try to beat my score at&url='+url+'&hashtags=Telequiz"></a>';
+    var twitterlLink = '<a class="share twitter" target="_blank" href="http://twitter.com/share?text=I scored '+ percentage +'% on telequiz. Try to beat my score at&url='+url+'&hashtags=Telequiz"></a>';
 
     var newMarkup = emailLink + twitterlLink;
 

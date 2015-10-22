@@ -2,6 +2,10 @@
   min-width: 7em !important; 
   height: 7em !important;
 }
+.button-retake {
+  min-width: 10em !important; 
+  min-height: 10em !important;
+}
 .quiz-info {
   text-align: center;
 }
@@ -36,6 +40,7 @@
     font-size: 30px;
 }
 
+
 #clock > div{
     padding: 10px;
     border-radius: 3px;
@@ -68,7 +73,18 @@ a.share-button{
   background-size: 25px 25px;
 }
 .results{
-  
+  font-family: sans-serif;
+    color: #fff;
+    display: inline-block;
+    font-weight: 100;
+    text-align: center;
+    font-size: 30px;
+}
+.results  > div {
+    padding: 10px;
+    border-radius: 3px;
+    background: #00BF96;
+    display: inline-block;
 }
 .share{
   margin-top: 40px;

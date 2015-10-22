@@ -7,19 +7,35 @@
   </head>
   <body ng-controller="QuizController" layout="column">
     <md-toolbar layout="row">
-      <md-button aria-label="Menu" class="menu" layout="column" layout-align="start center">
-        <md-icon md-svg-src="assets/start.svg"></md-icon>
-        <md-tooltip>Menu</md-tooltip>
+      <md-button ng-click="toggleSidenav('left')" hide-gt-md aria-label="Menu">
+        <ng-md-icon icon="menu"></ng-md-icon>
       </md-button>
-      <h2 layout="column" layout-align="center center" >Telequiz</h2>
+      <md-button aria-label="Search" ng-click="showSearch = !showSearch">
+        <ng-md-icon icon="search"></ng-md-icon>
+      </md-button>
+      <span flex-25></span>
+
+      <h3>Telequiz</h3>      
     </md-toolbar>
     <div layout="row" flex>
       <md-sidenav md-component-id="left" layout="column" md-is-locked-open="$mdMedia('gt-sm')" class="md-whiteframe-z2">
-        <md-list>
-          <md-list-item>
-            <md-button class="md-fab">Hey</md-button>
-          </md-list-item>
-        </md-list>
+         <div layout="row">
+           <md-button layout="column" flex-20 class="md-primary md-raised" ng-click="showSearch = !showSearch" aria-label="Back">
+            Back
+           </md-button>
+           <md-input-container layout="column" flex-80>
+             <label>&nbsp;</label>
+             <input ng-model="search.who" placeholder="Enter search">
+           </md-input-container>
+           <md-button aria-label="Search" ng-click="showSearch = !showSearch">
+             <ng-md-icon icon="search"></ng-md-icon>
+           </md-button>
+         </div>
+         <md-list>
+            <md-list-item>
+              
+            </md-list-item>
+         </md-list>
       </md-sidenav>
       <md-content id="content" flex >
         <md-card layout-align="center center" ng-show="quiz.begin === false">
@@ -33,8 +49,8 @@
             </section>
           </md-card-content>
         </md-card>
-        <div ng-show="quiz.begin === true" ng-repeat = "question in questions track by $index">
-           <md-card layout="column" layout-align="center center"  ng-if="$index === quiz.activeQuestion" class="fade-in-out">
+        <div layout="row" ng-show="quiz.begin === true" ng-repeat = "question in questions track by $index">
+           <md-card layout="column" layout-align="start start"  ng-if="$index === quiz.activeQuestion" class="fade-in-out">
              <md-card-content>
                 <h2 layout-align="center center">{{quiz.activeQuestion + 1}} : &nbsp; {{question.question}}</h2dict>
                 <div layout="row">
@@ -44,6 +60,9 @@
                   </br>   
                 </div>
              </md-card-content>
+           </md-card>  
+        </div>
+        <md-card layout="column" layout-align="end end" layout-wrap >
              <md-card-content layout-align="start start">
                <section ng-if="question.correctness" class="" flex="50" layout="column" layout-align="start center">
                   <span ng-if="question.correctness === 'correct'" class="green">That's correct!</span>
@@ -58,34 +77,40 @@
                   </div>
                </div>
                <md-button aria-label="Next Question" ng-if="!quiz.finished && (question.correctness || clock.timeover)" class="md-raised md-primary button-next" ng-click="nextQuestion()">Next Question</md-button>
-             </md-card-content>
-          </md-card>   
-        </div>
+             </md-card-content> 
+        </md-card>
         <md-card ng-show="feedback === true">
           <md-card-content>
             <p ng-show="myQuestion.correctness === 'correct'">You are <strong>correct</strong>.</p>
             <p ng-show="myQuestion.correctness === 'incorrect'">Oops! That is not correct.</p>
           </md-card-content>
         </md-card>
-        <md-card ng-if="quiz.finished === true" layout-wrap>
-          <md-card-content>
+        <md-card ng-if="quiz.finished === true" layout="row" layout-wrap>
+          <md-card-content layout="column" layout-align="start center">
+            <span id="left"></span>
             <h3>Results</h3>
             <p class="">You scored {{percentage}}% by correctly answering {{score}} of the total {{totalQuestions}} questions.</p>
             <p>Use the links below to challenge your friends.</p>
             <div class="share" ng-bind-html="createShareLinks(percentage)"></div>
           </md-card-content>
+          <md-card-content layout="column" layout-align="end center">
+            <h3>Challenge yourself even more</h3>
+            <md-button class="md-fab md-primary button-retake" aria-label="Retake Test" ng-click="reload()">Retake Test</md-button>
+            <span id="right"></span>
+          </md-card-content>
         </md-card>
       </md-content>
-    </div>
+    </div> 
     <script src="lib/angular/angular.js"></script>
     <script src="lib/angular-aria/angular-aria.js"></script>
     <script src="lib/angular-animate/angular-animate.js"></script>
     <script src="lib/angular-material/angular-material.js"></script>
+    <script src="//cdn.jsdelivr.net/angular-material-icons/0.4.0/angular-material-icons.min.js"></script> 
     <script type="text/javascript">
 
       angular.module('telequiz', ['ngMaterial',
-        'ngRoute','ngAnimate'])
-      .config(function($mdThemingProvider,$mdThemingProvider ) {
+        'ngRoute','ngAnimate', 'ngMdIcons'])
+      .config(function($mdThemingProvider, $mdThemingProvider, $mdDialog ) {
         $mdThemingProvider.theme('altTheme').primaryPalette('brown');
         $mdIconProvider.defaultIconSet("assets/start.svg", 128)
        });
