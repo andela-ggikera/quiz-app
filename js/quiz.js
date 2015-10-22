@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module( 'telequiz', [ 'ngMaterial' ] )
-.controller("QuizController", function ($scope, $sce, $timeout, $mdDialog, $window) {
+angular.module('telequiz')
+.controller("QuizController", function ($scope, $sce, $timeout, $mdDialog, $window, $firebaseObject, $firebaseArray, $q) {
   $scope.percentage = 0;
   $scope.score = 0;
   $scope.quiz = {
@@ -17,11 +17,18 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
   var mytimeout = null; // the current timeoutID
   
   //instantiate firebase integration
-  var firebase = new Firebase('https://telequiz.firebaseio.com/telequiz');
+  var firebase = new Firebase('https://telequiz.firebaseio.com/answers');
+  var scores = new Firebase('https://telequiz.firebaseio.com/telequiz/leaderboard');
+  
+  scores.once('value', function (data) {
+    $scope.users = data.val();
+    console.log($scope.users.leaderboard);
+  });
   $scope.answers = {};
   //fetch the answers
-  firebase.once('value', function(data){
+  firebase.once('value', function (data) {
     $scope.answers = data.val();
+    console.log($scope.answers);
   });
   //quiz questions
   $scope.questions = [
@@ -139,6 +146,9 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
   $scope.$watch('quiz.activeQuestion', function (activeQuestion) {
   	if (activeQuestion === $scope.totalQuestions) {
       $scope.stopTimer();
+      $scope.user.percentage = $scope.percentage;
+      //add scores
+      $firebaseArray(scores).$add($scope.user);
   	  return ($scope.quiz.finished = true);
   	}
   });
@@ -185,5 +195,43 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
     var newMarkup = emailLink + twitterlLink;
 
     return $sce.trustAsHtml(newMarkup);
+  };
+
+
+  var auth = new Firebase("https://telequiz.firebaseio.com");
+    //Authenticate the user using firebase facebook OAuth
+    function register() {
+      return $q(function(resolve, reject) {
+        auth.authWithOAuthPopup("facebook", function(error, data) {
+          if(error) {
+            reject(error);
+          } else {
+            resolve(data);
+          }
+        });
+      });
+    }
+    //get all the leaderboard data from firebase
+    function getLeaderBoard (callback) {
+      var reference = new Firebase("https://telequiz.firebaseio.com/leaderboard/");
+      return callback($firebaseArray(reference));
+    }
+    //add a new score to the leaderboard
+    function addData() {
+      // create a reference to the database location where we will store our data
+      var ref = new Firebase("https://typr.firebaseio.com/leaderboard/");
+      // this uses AngularFire to create the synchronized array
+      return $firebaseArray(ref);
+    }
+
+  $scope.register = function () {
+    register().then(function(authData){
+      console.log(authData);
+      var user = {};
+      $scope.user.id = authData.facebook.id,
+      $scope.user.name = authData.facebook.displayName;
+      $scope.user.profileImageURL = authData.facebook.profileImageURL;
+      $scope.loggedIn = true;
+    });
   };
 });
