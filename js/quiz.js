@@ -136,10 +136,10 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
   }); 
 
   $scope.$watch('quiz.activeQuestion', function (activeQuestion) {
-  	if ($scope. activeQuestion === $scope.totalQuestions - 1) {
+  	if (activeQuestion === $scope.totalQuestions) {
   	  console.log('Quiz finished');
+      $scope.stopTimer();
   	  return ($scope.quiz.finished = true);
-
   	}
   });
   $scope.selectAnswer = function (qIndex, aIndex) {
@@ -179,20 +179,19 @@ angular.module( 'telequiz', [ 'ngMaterial' ] )
   	return $scope.quiz.activeQuestion += 1;
   };
 
-});
-/*
-$scope.createShareLinks = function (percentage) {
+  $scope.createShareLinks = function (percentage) {
     var url = 'http://telequiz.firebaseapp.com';
 
-    var emailLink = '<a class="btn email" href="mailto:?subject=Try to beat my quiz score!&body=I scored a '+ percentage +'% on this quiz about common knowledge. Try to beat my score at '+ url +'">Email a friend</a>';
+    var emailLink = '<a class="share email" href="mailto:?subject=Try to beat my quiz score!&body=I scored a '+ percentage +'% on telequiz. Try to beat my score at '+ url +'"></a>';
 
-    var twitterlLink = '<a class="btn twitter" target="_blank" href="http://twitter.com/share?text=I scored a '+ percentage +'%25 on this quiz about Saturn. Try to beat my score at&url='+url+'&hashtags=SaturnQuiz">Tweet your score</a>';
+    var twitterlLink = '<a class="share twitter" target="_blank" href="http://twitter.com/share?text=I scored a '+ percentage +'%25 on this quiz about Saturn. Try to beat my score at&url='+url+'&hashtags=Telequiz"></a>';
 
     var newMarkup = emailLink + twitterlLink;
 
     return $sce.trustAsHtml(newMarkup);
   };
-
+});
+/*
   this.topDirections = ['left', 'up'];
   this.bottomDirections = ['down', 'right'];
   this.isOpen = false;
@@ -200,4 +199,4 @@ $scope.createShareLinks = function (percentage) {
   this.selectedMode = 'md-fling';
   this.availableDirections = ['up', 'down', 'left', 'right'];
   this.selectedDirection = 'up';
- */
+  */
