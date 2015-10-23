@@ -1,3 +1,9 @@
+/**
+ * Author <Jee Githinji Gikera {githinjigikera@gmail.com}>
+ * 
+ * telequiz controller
+ * 
+ */
 'use strict';
 
 angular.module('telequiz')
@@ -48,7 +54,7 @@ angular.module('telequiz')
   //get leaderboard reference to add new data
   var addData = function () {
     var ref = new Firebase("https://telequiz.firebaseio.com/leaderboard");
-    // this uses AngularFire to create the synchronized array
+    //angularfire array sync
     return $firebaseArray(ref);
   };
 
@@ -182,20 +188,19 @@ angular.module('telequiz')
     $timeout.cancel(mytimeout);
   };
 
-  // triggered, when the timer stops
+  // when time stops, get correct answer
   $scope.$on('timer-stopped', function (event, remaining) {
     if(remaining === 0) {
       $scope.clock.timeover = true;
       var curIndex = $scope.quiz.activeQuestion;
       var correctAnswer =  $scope.answers[curIndex];
       $scope.quiz.correctAnswer = $scope.questions[curIndex].answers[correctAnswer].text;
-
-      //compute 
     }
   }); 
 
   // handle results when quiz finishes
   $scope.$watch('quiz.activeQuestion', function (activeQuestion) {
+    // the quiz is done
   	if (activeQuestion === $scope.totalQuestions) {
       $scope.stopTimer();
       $scope.user.percentage = $scope.percentage;
@@ -215,9 +220,33 @@ angular.module('telequiz')
         }
         if (!exists) {
           console.log("User does not exist");
+          $scope.user.percentage = $scope.percentage;
           addData().$add($scope.user);
         }
         console.log("made changes...");
+      } else {
+        //prompt user to log in to submit scores
+        showDialog();
+        $scope.$watch('user.loggedIn',function (isLoggedIn) {
+          if (isLoggedIn === true) {
+            for (var i = 0; i < $scope.leaderBoard.length; i++) {
+              if ($scope.leaderBoard[i].id == $scope.user.id) {
+                console.log("Already existing in board...");
+                $scope.leaderBoard[i].percentage = $scope.percentage;
+                var list = addData();
+                list[i] = $scope.leaderBoard[i];
+                list.$save(i);
+                exists = true;
+                break;
+              }
+            }
+            if (!exists) {
+              console.log("User does not exist");
+              $scope.user.percentage = $scope.percentage;
+              addData().$add($scope.user);
+            }
+          }
+        });
       }
       return ($scope.quiz.finished = true);
   	}
@@ -255,4 +284,27 @@ angular.module('telequiz')
   	},0);
   	return $scope.quiz.activeQuestion += 1;
   };
+
+  //Result dialog. Loaded from  the resultDialog.html template
+  function showDialog(ev) {
+    $mdDialog.show({
+      controller : DialogController,
+      templateUrl: 'dialog.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutSideToClose: true,
+    });
+  }
+})
+
+// control the dialog
+.controller('DialogController', function ($scope, $mdDialog) {
+  $scope.hide = function() {
+    $mdDialog.hide();
+  };
+  $scope.cancel = function() {
+    $mdDialog.cancel();
+  };
 });
+
+
