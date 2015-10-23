@@ -164,9 +164,10 @@ angular.module('telequiz')
     var questionState = $scope.questions[qIndex].questionState;
 
     if ($scope.clock.timeover === true) {
+      //disable radio button
       return angular.noop();
     }
-    if( questionState != 'answered' ) {
+    if (questionState != 'answered') {
       $scope.questions[qIndex].selectedAnswer = aIndex;
       var correctAnswer = $scope.answers[qIndex]; 
       $scope.quiz.correctAnswer = $scope.questions[$scope.quiz.activeQuestion].answers[correctAnswer].text;
