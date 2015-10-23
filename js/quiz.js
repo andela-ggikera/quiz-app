@@ -69,7 +69,6 @@ angular.module('telequiz')
     return $scope.user;
   };
 
-  
   //call the leader board and return data
   getLeaderBoard ( function (leaderBoardData) {
     $scope.leaderBoard = leaderBoardData; 
