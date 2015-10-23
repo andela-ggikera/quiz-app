@@ -5,6 +5,7 @@ angular.module('telequiz')
   $scope.percentage = 0;
   $scope.score = 0;
   $scope.user = {};
+  $scope.user.loggedIn = false;
   $scope.quiz = {
   	begin : false,
   	activeQuestion : -1
@@ -20,10 +21,17 @@ angular.module('telequiz')
   //instantiate firebase integration
   var firebase = new Firebase('https://telequiz.firebaseio.com/answers');
   var scores = new Firebase('https://telequiz.firebaseio.com/leaderboard');
-  
-  scores.once('value', function (data) {
-    $scope.users = data.val();
+  //get all the leaderboard data from firebase
+  var getLeaderBoard = function (callback) {
+    var reference = new Firebase("https://telequiz.firebaseio.com/telequiz/leaderboard/");
+    return callback($firebaseArray(reference));
+  };
+
+  getLeaderBoard ( function (leaderBoardData) {
+    $scope.leaderBoard = leaderBoardData; 
+    console.log(leaderBoardData);
   });
+
   $scope.answers = {};
   //fetch the answers
   firebase.once('value', function (data) {
@@ -219,27 +227,21 @@ angular.module('telequiz')
     });
   }
 
-  //get all the leaderboard data from firebase
-  var getLeaderBoard = function (callback) {
-    var reference = new Firebase("https://telequiz.firebaseio.com/leaderboard/");
-    return callback($firebaseArray(reference));
-  };
-
-  //get leaderboard reference
-  var data = function () {
+  //get leaderboard reference to add new data
+  var addData = function () {
     var ref = new Firebase("https://telequiz.firebaseio.com/leaderboard");
     // this uses AngularFire to create the synchronized array
     return $firebaseArray(ref);
   };
 
-  //register a user
+  //register a user using facebook
   $scope.register = function () {
     registerWithFacebook().then(function(authData){
       var user = {};
       $scope.user.id = authData.facebook.id,
       $scope.user.name = authData.facebook.displayName;
       $scope.user.profileImageURL = authData.facebook.profileImageURL;
-      $scope.loggedIn = true;
+      $scope.user.loggedIn = true;
     });
     return $scope.user;
   };

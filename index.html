@@ -10,33 +10,35 @@
     <script src="lib/angular-material/angular-material.js"></script>
   </head>
   <body ng-app="telequiz" ng-controller="QuizController" layout="column" >
-    <md-toolbar layout="row">
-      <h2 layout="column" layout-align="center center" flex-50>telequiz</h2>      
+    <md-toolbar layout="row"
+      <span flex-10></span>
+      <h2 layout="column" layout-align="center center">telequiz</h2>    
+     <div class="md-toolbar-tools">
+         <span flex></span>
+         <md-button ng-if="!user.loggedIn" ng-click="register()" style="fill:white; top:1.5em; font-weight: bold;" layout="column" layout-align="center center" flex-50 aria-label="Menu">
+            <md-tooltip>Register using Facebook</md-tooltip>
+            <ng-md-icon icon="add"></ng-md-icon>
+         </md-button>
+         <md-button ng-if="user.loggedIn">
+          Logged in as {{user.name}}
+        </md-button>
+     </div>
     </md-toolbar>
     <div layout="row" flex>
       <md-sidenav md-component-id="left" layout="column" md-is-locked-open="$mdMedia('gt-sm')" class="md-whiteframe-z2">
-         <div layout="row">
-           <md-input-container layout="column" flex-80>
-             <label>&nbsp;</label>
+         <md-subheader class="md-no-sticky">
+           <md-input-container flex>
              <input ng-model="search.who" placeholder="Search leaderboard">
            </md-input-container>
-           <md-button class="white" ng-click="register()" layout="column" layout-align="center center" flex-50 aria-label="Menu">
-             <ng-md-icon icon="add"></ng-md-icon>
-           </md-button>
-         </div>
+         </md-subheader>
          <md-list>
-            <md-list-item class="md-2-line" ng-repeat="user in users.leaderboard | filter:search.who | orderBy: -score">
+            <md-list-item class="md-2-line" ng-repeat="user in leaderboard | filter:search.who | orderBy: -score">
               <h3>{{$index + 1}}. </h3>
               <img ng-src="{{user.profileImageURL}}" class="md-avatar" alt="{{todos[0].who}}" />
               <div class="md-list-item-text">
                 <h3>{{ user.name }}</h3>
                 <p>score: {{user.score}}%</p>
               </div>  
-            </md-list-item>
-         </md-list>
-         <md-list>
-            <md-list-item>
-              
             </md-list-item>
          </md-list>
       </md-sidenav>
@@ -58,7 +60,7 @@
                 <h2 layout-align="center center">{{quiz.activeQuestion + 1}} : &nbsp; {{question.question}}</h2>
                 <div layout="row">
                   <md-radio-group ng-model="data.group1" layout="column" class="md-primary">
-                    <md-radio-button class="radio" ng-repeat="answer in question.answers" ng-value="answer.id" ng-click=" selectAnswer($parent.$index, $index)" ng-disabled="clock.timeover===true">{{ answer.text }}</md-radio-button>
+                    <md-radio-button class="radio" ng-repeat="answer in question.answers" ng-value="answer.id" ng-click=" selectAnswer($parent.$index, $index)" ng-disabled="clock.timeover===true || question.correctness">{{ answer.text }}</md-radio-button>
                   </md-radio-group>
                   </br>   
                 </div>
