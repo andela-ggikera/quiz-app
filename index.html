@@ -15,9 +15,9 @@
       <h2 layout="column" layout-align="center center">telequiz</h2>    
      <div class="md-toolbar-tools">
          <span flex></span>
-         <md-button ng-if="!user.loggedIn" ng-click="register()" style="fill:white; top:1.5em; font-weight: bold;" layout="column" layout-align="center center" flex-50 aria-label="Menu">
+         <md-button ng-if="!user.loggedIn" ng-click="register()" style="fill:white; top:1.5em; font-weight: bold;" flex-50 aria-label="Menu">
             <md-tooltip>Register using Facebook</md-tooltip>
-            <ng-md-icon icon="add"></ng-md-icon>
+            <ng-md-icon icon="account_circle"></ng-md-icon>
          </md-button>
          <md-button ng-if="user.loggedIn">
           Logged in as {{user.name}}
@@ -37,7 +37,7 @@
               <img ng-src="{{user.profileImageURL}}" class="md-avatar" alt="{{todos[0].who}}" />
               <div class="md-list-item-text">
                 <h3>{{ user.name }}</h3>
-                <p>score: {{user.score}}%</p>
+                <p>score: {{user.percentage}}%</p>
               </div>  
             </md-list-item>
          </md-list>
