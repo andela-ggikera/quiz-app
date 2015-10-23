@@ -32,7 +32,7 @@
            </md-input-container>
          </md-subheader>
          <md-list>
-            <md-list-item class="md-2-line" ng-repeat="user in leaderBoard | filter:search.who | orderBy:'+percentage'">
+            <md-list-item class="md-2-line" ng-repeat="user in leaderBoard | filter:search.who | orderBy:'percentage'">
               <h3>{{$index + 1}}:&nbsp;</h3>
               <img ng-src="{{user.profileImageURL}}" class="md-avatar"/>
               <div class="md-list-item-text">
@@ -93,7 +93,7 @@
             <div>
                 <span>You scored {{percentage}}% by correctly answering {{score}} of the total {{totalQuestions}} questions</span>
             </div>
-            <div>Click on the icon on the right to save your scores</div>
+            <div ng-if="!user.loggedIn">Click on the icon on the right to save your scores</div>
           </md-card-content>
           <md-card-content layout="column">
             <div class="share" ng-bind-html="createShareLinks(percentage)"></div>
