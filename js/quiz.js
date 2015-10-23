@@ -73,7 +73,6 @@ angular.module('telequiz')
   //call the leader board and return data
   getLeaderBoard ( function (leaderBoardData) {
     $scope.leaderBoard = leaderBoardData; 
-    console.log("USERS", leaderBoardData);
   });
 
   $scope.answers = {};
@@ -209,7 +208,6 @@ angular.module('telequiz')
         var exists = false;
         for (var i = 0; i < $scope.leaderBoard.length; i++) {
           if ($scope.leaderBoard[i].id == $scope.user.id) {
-            console.log("Already existing in board...");
             $scope.leaderBoard[i].percentage = $scope.percentage;
             var list = addData();
             list[i] = $scope.leaderBoard[i];
@@ -219,11 +217,9 @@ angular.module('telequiz')
           }
         }
         if (!exists) {
-          console.log("User does not exist");
           $scope.user.percentage = $scope.percentage;
           addData().$add($scope.user);
         }
-        console.log("made changes...");
       } else {
         //prompt user to log in to submit scores
         showDialog();
@@ -231,7 +227,6 @@ angular.module('telequiz')
           if (isLoggedIn === true) {
             for (var i = 0; i < $scope.leaderBoard.length; i++) {
               if ($scope.leaderBoard[i].id == $scope.user.id) {
-                console.log("Already existing in board...");
                 $scope.leaderBoard[i].percentage = $scope.percentage;
                 var list = addData();
                 list[i] = $scope.leaderBoard[i];
@@ -241,7 +236,6 @@ angular.module('telequiz')
               }
             }
             if (!exists) {
-              console.log("User does not exist");
               $scope.user.percentage = $scope.percentage;
               addData().$add($scope.user);
             }
