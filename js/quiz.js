@@ -162,6 +162,10 @@ angular.module('telequiz')
   $scope.selectAnswer = function (qIndex, aIndex) {
   	$scope.quiz.timeover = true;
     var questionState = $scope.questions[qIndex].questionState;
+
+    if ($scope.clock.timeover === true) {
+      return angular.noop();
+    }
     if( questionState != 'answered' ) {
       $scope.questions[qIndex].selectedAnswer = aIndex;
       var correctAnswer = $scope.answers[qIndex]; 

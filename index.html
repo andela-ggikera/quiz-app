@@ -58,7 +58,7 @@
                 <h2 layout-align="center center">{{quiz.activeQuestion + 1}} : &nbsp; {{question.question}}</h2>
                 <div layout="row">
                   <md-radio-group ng-model="data.group1" layout="column" class="md-primary">
-                    <md-radio-button class="radio" ng-repeat="answer in question.answers" ng-value="answer.id" ng-click="selectAnswer($parent.$index, $index)">{{ answer.text }}</md-radio-button>
+                    <md-radio-button class="radio" ng-repeat="answer in question.answers" ng-value="answer.id" ng-click=" selectAnswer($parent.$index, $index)" ng-disabled="clock.timeover===true">{{ answer.text }}</md-radio-button>
                   </md-radio-group>
                   </br>   
                 </div>
@@ -96,7 +96,8 @@
           </br>
           <md-card-content layout="column" layout-align="center center">
             <h3>Not pleased with your score?</h3>
-            <md-button class="md-fab md-primary button-retake" aria-label="Retake Test" ng-click="reload()">Retake Test</md-button>
+            <md-button class="md-fab md-primary button-retake" aria-label="Retake Test" ng-click="reload()">Retake Test
+            <md-tooltip>We are in this together</md-tooltip></md-button>
           </md-card-content>
         </md-card>
       </md-content>
@@ -105,7 +106,6 @@
     <script src="js/angularfire.min.js"></script>
     <script src="https://cdn.jsdelivr.net/angular-material-icons/0.4.0/angular-material-icons.min.js"></script> 
     <script src="js/app.js"></script>
-    <script src="js/services.js"></script>
     <script src="js/quiz.js"></script>
     
   </body>
