@@ -26,18 +26,15 @@ angular.module('telequiz')
   var getLeaderBoard = function (callback) {
     var reference = new Firebase("https://telequiz.firebaseio.com/telequiz/leaderboard/");
     // Retrieve new posts as they are added to our database
-    reference.on("child_added", function(snapshot, prevChildKey) {
-      var users = snapshot.val();
-      return callback(users);
-    });
-    //return callback($firebaseArray(reference));
+    var data = $firebaseArray(reference);
+    return callback(data);
   };
 
   
-
+  //call the leader board and return data
   getLeaderBoard ( function (leaderBoardData) {
     $scope.leaderBoard = leaderBoardData; 
-    console.log(leaderBoardData);
+    console.log("USERS", leaderBoardData);
   });
 
   $scope.answers = {};

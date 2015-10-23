@@ -32,9 +32,9 @@
            </md-input-container>
          </md-subheader>
          <md-list>
-            <md-list-item class="md-2-line" ng-repeat="user in leaderboard | filter:search.who | orderBy: -score">
-              <h3>{{$index + 1}}. </h3>
-              <img ng-src="{{user.profileImageURL}}" class="md-avatar" alt="{{todos[0].who}}" />
+            <md-list-item class="md-2-line" ng-repeat="user in leaderBoard | filter:search.who | orderBy: -percentage">
+              <h3>{{$index + 1}}:&nbsp;</h3>
+              <img ng-src="{{user.profileImageURL}}" class="md-avatar"/>
               <div class="md-list-item-text">
                 <h3>{{ user.name }}</h3>
                 <p>score: {{user.percentage}}%</p>
