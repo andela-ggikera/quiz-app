@@ -20,7 +20,7 @@ angular.module('telequiz')
   
   //instantiate firebase integration
   var firebase = new Firebase('https://telequiz.firebaseio.com/answers');
-  var scores = new Firebase('https://telequiz.firebaseio.com/leaderboard');
+  var scores = new Firebase('https://telequiz.firebaseio.com/telequiz/leaderboard');
   
   //get all the leaderboard data from firebase
   var getLeaderBoard = function (callback) {
@@ -28,6 +28,38 @@ angular.module('telequiz')
     // Retrieve new posts as they are added to our database
     var data = $firebaseArray(reference);
     return callback(data);
+  };
+
+  //Authenticate the user using firebase Facebook OAuth
+  var auth = new Firebase("https://telequiz.firebaseio.com");
+  var  registerWithFacebook = function () {
+    return $q(function(resolve, reject) {
+      auth.authWithOAuthPopup("facebook", function(error, data) {
+        if(error) {
+          reject(error);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  }
+
+  //get leaderboard reference to add new data
+  var addData = function () {
+    var ref = new Firebase("https://telequiz.firebaseio.com/leaderboard");
+    // this uses AngularFire to create the synchronized array
+    return $firebaseArray(ref);
+  };
+
+  //register a user using facebook
+  $scope.register = function () {
+    registerWithFacebook().then(function(authData){
+      $scope.user.id = authData.facebook.id,
+      $scope.user.name = authData.facebook.displayName;
+      $scope.user.profileImageURL = authData.facebook.profileImageURL;
+      $scope.user.loggedIn = true;
+    });
+    return $scope.user;
   };
 
   
@@ -165,9 +197,27 @@ angular.module('telequiz')
   	if (activeQuestion === $scope.totalQuestions) {
       $scope.stopTimer();
       $scope.user.percentage = $scope.percentage;
-      //add scores
-      $firebaseArray(scores).$add($scope.user);
-  	  return ($scope.quiz.finished = true);
+
+      if ($scope.user.id !== undefined) {
+        var exists = false;
+        for (var i = 0; i < $scope.leaderBoard.length; i++) {
+          if ($scope.leaderBoard[i].id == $scope.user.id) {
+            console.log("Already existing in board...");
+            $scope.leaderboardData[i].percentage = $scope.percentage;
+            var list = addData();
+            list[i] = $scope.leaderboardData[i];
+            list.$save(i);
+            exists = true;
+            break;
+          }
+        }
+        if (!exists) {
+          console.log("User does not exist");
+          addData().$add($scope.user);
+        }
+        console.log("made cnanges...");
+      }
+      return ($scope.quiz.finished = true);
   	}
   });
 
@@ -215,39 +265,5 @@ angular.module('telequiz')
     var newMarkup = emailLink + twitterlLink;
 
     return $sce.trustAsHtml(newMarkup);
-  };
-
-  
-  //Authenticate the user using firebase Facebook OAuth
-  var auth = new Firebase("https://telequiz.firebaseio.com");
-  var  registerWithFacebook = function () {
-    return $q(function(resolve, reject) {
-      auth.authWithOAuthPopup("facebook", function(error, data) {
-        if(error) {
-          reject(error);
-        } else {
-          resolve(data);
-        }
-      });
-    });
-  }
-
-  //get leaderboard reference to add new data
-  var addData = function () {
-    var ref = new Firebase("https://telequiz.firebaseio.com/leaderboard");
-    // this uses AngularFire to create the synchronized array
-    return $firebaseArray(ref);
-  };
-
-  //register a user using facebook
-  $scope.register = function () {
-    registerWithFacebook().then(function(authData){
-      var user = {};
-      $scope.user.id = authData.facebook.id,
-      $scope.user.name = authData.facebook.displayName;
-      $scope.user.profileImageURL = authData.facebook.profileImageURL;
-      $scope.user.loggedIn = true;
-    });
-    return $scope.user;
   };
 });
