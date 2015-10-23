@@ -20,11 +20,10 @@ angular.module('telequiz')
   
   //instantiate firebase integration
   var firebase = new Firebase('https://telequiz.firebaseio.com/answers');
-  var scores = new Firebase('https://telequiz.firebaseio.com/telequiz/leaderboard');
   
   //get all the leaderboard data from firebase
   var getLeaderBoard = function (callback) {
-    var reference = new Firebase("https://telequiz.firebaseio.com/telequiz/leaderboard/");
+    var reference = new Firebase("https://telequiz.firebaseio.com/leaderboard/");
     // Retrieve new posts as they are added to our database
     var data = $firebaseArray(reference);
     return callback(data);
@@ -32,6 +31,8 @@ angular.module('telequiz')
 
   //Authenticate the user using firebase Facebook OAuth
   var auth = new Firebase("https://telequiz.firebaseio.com");
+  
+  //register with facebook to save your scores
   var  registerWithFacebook = function () {
     return $q(function(resolve, reject) {
       auth.authWithOAuthPopup("facebook", function(error, data) {
@@ -42,7 +43,7 @@ angular.module('telequiz')
         }
       });
     });
-  }
+  };
 
   //get leaderboard reference to add new data
   var addData = function () {
@@ -74,6 +75,7 @@ angular.module('telequiz')
   firebase.once('value', function (data) {
     $scope.answers = data.val();
   });
+
   //quiz questions
   $scope.questions = [
   {
@@ -168,13 +170,13 @@ angular.module('telequiz')
     mytimeout = $timeout($scope.onTimeout, 1000);
   };
 
-  $scope.startTimer = function() {
+  $scope.startTimer = function () {
   	$scope.clock.timeover = false;
     mytimeout = $timeout($scope.onTimeout, 1000);
   };
 
   // stops and resets the current timer
-  $scope.stopTimer = function() {
+  $scope.stopTimer = function () {
     $scope.$broadcast('timer-stopped', $scope.clock.counter);
     $scope.clock.counter = 10;
     $timeout.cancel(mytimeout);
@@ -203,9 +205,9 @@ angular.module('telequiz')
         for (var i = 0; i < $scope.leaderBoard.length; i++) {
           if ($scope.leaderBoard[i].id == $scope.user.id) {
             console.log("Already existing in board...");
-            $scope.leaderboardData[i].percentage = $scope.percentage;
+            $scope.leaderBoard[i].percentage = $scope.percentage;
             var list = addData();
-            list[i] = $scope.leaderboardData[i];
+            list[i] = $scope.leaderBoard[i];
             list.$save(i);
             exists = true;
             break;
@@ -215,7 +217,7 @@ angular.module('telequiz')
           console.log("User does not exist");
           addData().$add($scope.user);
         }
-        console.log("made cnanges...");
+        console.log("made changes...");
       }
       return ($scope.quiz.finished = true);
   	}
@@ -225,9 +227,8 @@ angular.module('telequiz')
   $scope.selectAnswer = function (qIndex, aIndex) {
   	$scope.quiz.timeover = true;
     var questionState = $scope.questions[qIndex].questionState;
-
     if ($scope.clock.timeover === true) {
-      //disable radio button
+      //disable radio button by just doing nothing when clicked
       return angular.noop();
     }
     if (questionState != 'answered') {
@@ -235,7 +236,7 @@ angular.module('telequiz')
       var correctAnswer = $scope.answers[qIndex]; 
       $scope.quiz.correctAnswer = $scope.questions[$scope.quiz.activeQuestion].answers[correctAnswer].text;
       $scope.questions[qIndex].correctAnswer = correctAnswer;
-      if(aIndex === correctAnswer) {
+      if (aIndex === correctAnswer) {
         $scope.questions[qIndex].correctness = 'correct';
         $scope.score += 1;
       } else {
@@ -243,27 +244,15 @@ angular.module('telequiz')
       }
       $scope.questions[qIndex].questionState = 'answered';
     }
-    $scope.percentage = (($scope.score / $scope.totalQuestions)*100).toFixed(2);
+    $scope.percentage = ( ($scope.score / $scope.totalQuestions) * 100 ).toFixed(2);
   };
 
-  //handle next question button
+  // handle next question button
   $scope.nextQuestion = function () {
   	setTimeout( function (){
   	  $scope.stopTimer();
   	  $scope.startTimer();
   	},0);
   	return $scope.quiz.activeQuestion += 1;
-  };
-
-  $scope.createShareLinks = function (percentage) {
-    var url = 'https://telequiz.firebaseapp.com';
-
-    var emailLink = '<a class="share email" href="mailto:?subject=Try to beat my quiz score!&body=I scored '+ percentage +'% on telequiz. Try to beat my score at '+ url +'"></a>';
-
-    var twitterlLink = '<a class="share twitter" target="_blank" href="http://twitter.com/share?text=I scored '+ percentage +'% on telequiz. Try to beat my score at&url=' +url+ '&hashtags=Telequiz"></a>';
-
-    var newMarkup = emailLink + twitterlLink;
-
-    return $sce.trustAsHtml(newMarkup);
   };
 });

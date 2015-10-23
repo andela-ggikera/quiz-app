@@ -50,7 +50,10 @@
             You will be asked a series of timed questions to test your knowledge on just about anything. Click below to start your quiz
             </p>
             <section layout-align="center center" layout-wrap>
-              <md-button class="button-begin md-fab md-primary" aria-label="Begin" ng-click="begin()">Begin</md-button>
+              <md-button class="button-begin md-fab md-primary" aria-label="Begin" ng-click="begin()">
+                Begin
+                <md-tooltip>I'm ready to go!</md-tooltip>
+              </md-button>
             </section>
           </md-card-content>
         </md-card>
@@ -89,7 +92,9 @@
             <div>Results</div>
             <div>
                 <span>You scored {{percentage}}% by correctly answering {{score}} of the total {{totalQuestions}} questions</span>
+
             </div>
+            <div>Click on the icon on the right to save your scores</div>
           </md-card-content>
           <md-card-content layout="column">
             <div class="share" ng-bind-html="createShareLinks(percentage)"></div>
