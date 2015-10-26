@@ -57,10 +57,10 @@
             </section>
           </md-card-content>
         </md-card>
-        <div layout="row" ng-show="quiz.begin === true" ng-repeat = "question in questions track by $index" ng-if="$index === quiz.activeQuestion">
+        <div layout="row" ng-show="quiz.begin === true" ng-repeat = "question in questions track by $index" ng-if="$index === quiz.randomQuestion">
            <md-card layout="column" layout-align="start start" flex-50 class="fade-in-out">
              <md-card-content class="blue-question-container">
-                <h2 layout-align="center center">{{quiz.activeQuestion + 1}} : &nbsp; {{question.question}}</h2>
+                <h2 layout-align="center center">{{quiz.questionIndex + 1}} : &nbsp; {{question.question}}</h2>
                 <div layout="row">
                   <md-radio-group ng-model="data.group1" layout="column" class="md-primary">
                     <md-radio-button class="radio" ng-repeat="answer in question.answers" ng-value="answer.id" ng-click=" selectAnswer($parent.$index, $index)" ng-disabled="clock.timeover===true || question.correctness">{{ answer.text }}</md-radio-button>
@@ -73,11 +73,10 @@
              <md-card-content layout-align="end end">
                <section ng-if="question.correctness" class="" flex layout="column" layout-align="start start">
                   <span ng-if="question.correctness === 'incorrect'" class="red">Yikes, that's incorrect!</span>
-                  <p>{{ question.feedback }}</p>
                </section>
                <div layout="column" layout-align="right" id="clock">
                   <div>
-                    <span ng-if="!question.correctness">{{clock.counter}}</span> 
+                    <span ng-if="!question.correctness || clock.timeover === false">{{clock.counter}}</span> 
                     <span ng-if="!question.correctness && clock.timeover === true" class="small">Oops, you ran out of time!</span> 
                     <span ng-if="(clock.timeover === true && !question.correctness) || question.correctness === 'incorrect'" class="small">The answer is {{quiz.correctAnswer}}</span> 
                     <span ng-if="question.correctness === 'correct'">That's correct!</span>
@@ -93,7 +92,6 @@
             <div>
                 <span>You scored {{percentage}}% by correctly answering {{score}} of the total {{totalQuestions}} questions</span>
             </div>
-            <div ng-if="!user.loggedIn">Click on the icon on the right to save your scores</div>
           </md-card-content>
           <md-card-content layout="column">
             <div class="share" ng-bind-html="createShareLinks(percentage)"></div>
